@@ -15,25 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 #solicito TOKEN
-TOKEN = os.getenv("1497041476:AAFpd0OEyNgomBWyWaJnp3-IKIVgmVY67Qw")
-mode = os.getenv("MODE")
-
-if (mode == "dev"):
-    #Acceso local
-    def run(updater):
-        updater.start_polling() #pregunta sobre mensajes entrantes
-        print("BOT CARGADO")
-        updater.idle() #terminar bot con ctrl + c
-elif (mode == "prod"):
-    #Acceso HEROKU (Produccion)
-    def run(updater):
-        PORT = int(os.environ.get("PORT","80"))
-        HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
-        updater.start_webhook(listen='0.0.0.0', port=8443, url_path='TOKEN',)
-        updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp./{TOKEN}")
-else:
-    logger.info("No se especifico el MODE.")
-    sys.exit()
+TOKEN = os.getenv("TOKEN")
 
 
 def getBotInfo(update, context):
@@ -112,4 +94,6 @@ dp.add_handler(CommandHandler("WhatsApp", WhatsApp))
 dp.add_handler(CommandHandler("WhatsAppBot", WhatsAppBot))
 dp.add_handler(CommandHandler("Redes", Redes))
 
-run(updater)
+updater.start_polling() #pregunta sobre mensajes entrantes
+print("BOT CARGADO")
+updater.idle() #terminar bot con ctrl + c
