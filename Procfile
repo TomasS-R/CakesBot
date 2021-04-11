@@ -1,1 +1,1 @@
-worker: python3 CakesAndChocolats.py
+web: python3 CakesAndChocolats.py
