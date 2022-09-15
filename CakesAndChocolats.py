@@ -1,10 +1,14 @@
 import os
 import sys
 import logging #Ver lo que hace el Bot
+import time
 import telegram
+import gdown #Download file to GOOGLE DRIVE
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+vers="Beta 0.5"
+fechavers = "14/09/2022"
 
 logging.basicConfig(
     level = logging.INFO, format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s,"
@@ -55,15 +59,18 @@ def echo(update,context):
     botWA = 'Bot para WhatsApp'
     RS = 'Redes Sociales'
     programador = 'Programador del bot'
-    datos = "Mas..."
+    datos = 'Mas...'
     menu = 'Menu'
-    atrasmas = "Atras"
+    atrasmas = 'Atras'
+    descarga = 'Descargar PDF'
+    online = 'Ver online'
+    volveratras = 'Volver'
 
     if informacionbot in text:
         getBotInfo(update, context)
     elif nuestroWA in text:
         WhatsApp(update, context)
-    elif listprecios in text:
+    elif listprecios in text or volveratras in text:
         Lista(update, context)
     elif botWA in text:
         WhatsAppBot(update, context)
@@ -73,12 +80,14 @@ def echo(update,context):
         Programador(update, context)
     elif menu in text:
         Menu(update, context)
-    elif datos in text:
+    elif datos in text or atrasmas in text:
         Mas(update, context)
-    elif atrasmas in text:
-        Mas(update, context)
+    elif descarga in text:
+        Descarga(update, context)
+    elif online in text:
+        VerOnline(update, context)
     else:
-        update.message.reply_text(f'Lo siento pero no entendi.')
+        update.message.reply_text(f'Lo siento pero no entendi. 😔')
         logger.info(f'El usuario {userName} introdujo un comando no valido.')
 
 
@@ -102,9 +111,34 @@ def getBotInfo(update, context):
         parse_mode = "HTML",
         text = f'Soy un bot creado para enviar informacion sobre:\n<b>Cakes and Chocolat´s</b>'
     )
-    update.message.reply_text('Regresar al menu?', reply_markup=reply_markup)
-    
-
+    time.sleep(2)
+    update.message.reply_text(f'Mi ultima Actualizacion fue el ' + fechavers + '. Y estoy en la version ' + vers)
+    time.sleep(5)
+    bot.sendMessage(
+        chat_id = ChatId,
+        parse_mode = "HTML",
+        text = f'Estoy alojado en <a href="https://www.heroku.com/">Heroku</a> y programado en <a href="https://www.python.org/">Python 3.0</a>'
+    )
+    time.sleep(5)
+    update.message.reply_text(f'¿Te cuento una curiosidad?')
+    time.sleep(5)
+    bot.sendMessage(
+        chat_id = ChatId,
+        parse_mode = "HTML",
+        text = f'Mi especialidad es trabajar con <a href="https://www.google.com/intl/es/drive/">Google drive</a>!'
+    )
+    time.sleep(3)
+    update.message.reply_text(f'Si! el programador en la ultima actualizacion me agrego esta funcionalidad! 😍')
+    time.sleep(5)
+    update.message.reply_text(f'Lo unico que hago es descargar la ultima version de la lista de precios actualizada desde Google Drive.')
+    time.sleep(5)
+    update.message.reply_text(f'Lo mejor es que lo hago automaticamente.')
+    time.sleep(5)
+    update.message.reply_text(f'Que genial ¿no?')
+    time.sleep(2)
+    link = 'https://tenor.com/view/mind-blow-galaxy-explode-boom-fireworks-gif-5139389'
+    bot.sendAnimation(chat_id = update.effective_chat.id,animation = link)
+    update.message.reply_text('¿Deseas regresar al menu?', reply_markup=reply_markup)
 
 def Menu(update, context):
     bot = context.bot
@@ -119,7 +153,6 @@ def Menu(update, context):
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     update.message.reply_text('*****📝 Menu 📝*****\nElige una de las siguientes opciones:',  reply_markup=reply_markup)
 
-
 def Mas(update, context):
     bot = context.bot
     ChatId = update.message.chat_id
@@ -130,8 +163,6 @@ def Mas(update, context):
     keyboard.append([KeyboardButton(f'📝 Menu', callback_data='7')])
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     update.message.reply_text('Seleccione una opcion:',  reply_markup=reply_markup)
-
-
 
 def start(update, context):
     bot = context.bot
@@ -145,8 +176,7 @@ def start(update, context):
     keyboard.append([KeyboardButton(f'Mas...', callback_data='5')])
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
-    update.message.reply_text('!Hola gracias por llamarme!\nElige una de las siguientes opciones:',  reply_markup=reply_markup)
-
+    update.message.reply_text('¡Hola ' + userName + ' gracias por llamarme!\nElige una de las siguientes opciones:',  reply_markup=reply_markup)
 
 def WhatsApp(update, context):
     bot = context.bot
@@ -165,10 +195,9 @@ def WhatsApp(update, context):
     bot.sendMessage(
         chat_id = ChatId,
         parse_mode = "HTML",
-        text = f'Este es nuestro WhatsApp\n<a href="https://api.whatsapp.com/send?phone=+54115328-7043">Cakes And Chocolat´s WhatsApp</a>\nSi quieres realizar una compra puedes hacerlo mediante el enlace\n<b>Envios a CABA, precio no incuido.</b>'
+        text = f'Este es nuestro WhatsApp\n<a href="https://api.whatsapp.com/send?phone=+54115328-7043">Cakes And Chocolat´s WhatsApp</a>\nSi quieres realizar una compra puedes hacerlo mediante el enlace\n<b>Envios a CABA, precio del envio no incuido.</b>'
     )
     update.message.reply_text('Regresar al menu?', reply_markup=reply_markup)
-
 
 def WhatsAppBot(update, context):
     bot = context.bot
@@ -187,7 +216,6 @@ def WhatsAppBot(update, context):
     logger.info(f'El Usuario {userName} Id:{ChatId} ah solicitado el Bot de WhatsApp')
     update.message.reply_text(f'Aun estamos trabajando en esta funcion.')
     update.message.reply_text('Mientras tanto puedes ver otras opciones', reply_markup=reply_markup)
-
 
 def Redes(update, context):
     bot = context.bot
@@ -210,27 +238,66 @@ def Redes(update, context):
     )
     update.message.reply_text('Regresar al menu?', reply_markup=reply_markup)
 
-
-
-def Lista(update, context,filename=None):
+def Lista(update, context):
     bot = context.bot
     ChatId = update.message.chat_id
     userName = update.effective_user["first_name"]
-    # Menu keyboard
     updatemsg = getattr(update, 'message', None)
     #Obtener Id del mensaje
     messageId = updatemsg.message_id
     text = update.message.text
+    # Menu keyboard
     keyboard = []
+    keyboard.append([KeyboardButton(f'Descargar PDF 📥', callback_data='5'), KeyboardButton(f'Ver online 🌐', callback_data='6')])
     keyboard.append([KeyboardButton(f'📝 Menu', callback_data='7')])
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     # Fin Menu
     logger.info(f'El Usuario {userName} Id:{ChatId} ah solicitado las listas')
-    update.message.reply_text(f'Aguarde un momento por favor. El archivo se esta descargando...')
-    bot.sendDocument(chat_id=ChatId, document=open('ListaTortasNueva.pdf', 'rb'), filename="Lista de precios.pdf")
-    logger.info(f'Lista de precios enviada a {userName} Id:{ChatId}')
+    update.message.reply_text('Opciones:', reply_markup=reply_markup)
+
+def VerOnline(update, context):
+    bot = context.bot
+    ChatId = update.message.chat_id
+    userName = update.effective_user["first_name"]
+    update.message.reply_text(f'Puede ver la lista en el siguiente link:')
+    bot.sendMessage( chat_id = ChatId, parse_mode = "HTML", text = f'<a href="https://bit.ly/3xo8iYZ">VER LISTA ✔️</a>')
+    # Menu keyboard
+    keyboard = []
+    keyboard.append([KeyboardButton(f'🔙 Volver', callback_data='12'), KeyboardButton(f'📝 Menu', callback_data='7')])
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+    # Fin Menu
+    logger.info(f'El Usuario {userName} Id:{ChatId} ah solicitado ver las listas de manera online')
     update.message.reply_text('Regresar al menu?', reply_markup=reply_markup)
 
+def Descarga(update, context, filename=None):
+    bot = context.bot
+    ChatId = update.message.chat_id
+    userName = update.effective_user["first_name"]
+    update.message.reply_text(f'Aguarde un momento por favor.')
+    update.message.reply_text(f'El archivo se esta descargando...')
+    #url = 'https://drive.google.com/uc?id=1cQcwACnR646EfVX0ObXmKHvvdApxNaz_'
+    #output = 'Lista.pdf'
+    #doc = gdown.download(url, output, quiet=False)
+    link = 'https://drive.google.com/uc?id=1cQcwACnR646EfVX0ObXmKHvvdApxNaz_'
+    if (FileNotFoundError):
+        time.sleep(5)
+        update.message.reply_text(f'Ups! parece que hay un error en la descarga')
+        time.sleep(5)
+        update.message.reply_text(f'Puede ver la lista en el siguiente link:')
+        time.sleep(2)
+        bot.sendMessage( chat_id = ChatId, parse_mode = "HTML", text = f'<a href="https://bit.ly/3xo8iYZ">VER LISTA ✔️</a>')
+        logger.info(f'El usuario {userName} Id:{ChatId} solicito descargar la lista pero hubo un error en la descarga')
+    else:
+        bot.sendDocument(chat_id = update.effective_chat.id, Document = link)
+        #bot.sendDocument(chat_id=ChatId, document=open('lista.pdf', 'rb'), filename=output)
+        update.message.reply_text(f'Esta es la ultima y mas reciente lista')
+        logger.info(f'Lista de precios enviada a {userName} Id:{ChatId}')
+    # Menu keyboard
+    keyboard = []
+    keyboard.append([KeyboardButton(f'🔙 Volver', callback_data='12'), KeyboardButton(f'📝 Menu', callback_data='7')])
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+    # Fin Menu
+    update.message.reply_text('Opciones:', reply_markup=reply_markup)
 
 def Programador(update, context):
     bot = context.bot
@@ -249,7 +316,17 @@ def Programador(update, context):
     bot.sendMessage(
         chat_id = ChatId,
         parse_mode = "HTML",
-        text = f'Creador del bot\n@TommySR\n<a href="https://github.com/TomasSR27">GitHub Profile</a>\n<a href="https://heylink.me/Tom%C3%A1sSR/">More Information of Profile</a>'
+        text = f'Creador del bot\n@TommySR'
+    )
+    bot.sendMessage(
+        chat_id = ChatId,
+        parse_mode = "HTML",
+        text = f'Tambien puedes ver mi perfil de GitHub:\n<a href="https://github.com/TomasS-R">GitHub Profile</a>'
+    )
+    bot.sendMessage(
+        chat_id = ChatId,
+        parse_mode = "HTML",
+        text = f'O si quieres puedes ver:\n<a href="https://heylink.me/Tom%C3%A1sSR/">Mas sobre mi!</a>'
     )
     update.message.reply_text('Seleccione una opcion:', reply_markup=reply_markup)
 
